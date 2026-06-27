@@ -1,0 +1,13 @@
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# Local tooling
+.claude/
+node_modules/
+
+# Packaged build artifacts
+*.zip
+web-helper-*.zip

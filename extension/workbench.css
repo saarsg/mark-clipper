@@ -1,0 +1,197 @@
+/* Web Helper workbench — base styling. Opinionated, frameworkless, dark-first.
+   Design language: a working "context prep station", not a landing page. The signature is
+   SECTION-COLOR CODING — each action group carries a temperature: capture = cool blue (pull in),
+   view = teal (inspect), SEND = warm amber (the consequential, outbound action — leaves the tool),
+   tools = neutral. Color encodes "what does this group do", so the one action that matters
+   (Copy & Open) reads instantly different from the rest. Send's knobs hide behind an Options
+   disclosure so the default view is just that one action. */
+:root {
+  --bg: #14161a;
+  --panel: #1b1e24;
+  --panel-2: #21252c;
+  --panel-3: #262b33;
+  --line: #2c313a;
+  --text: #e7eaef;
+  --muted: #9aa3b2;
+  --accent: #6ea8fe;
+  --accent-2: #3d6fd6;
+  --danger: #e06c75;
+
+  /* section temperatures */
+  --capture: #6ea8fe;   /* cool blue — pull content in */
+  --view: #4fd1c5;      /* teal — inspect / extract */
+  --send: #e8a13c;      /* warm amber — the outbound, consequential action */
+  --send-2: #c9831f;    /* amber, deeper — primary button fill */
+  --tools: #8b93a3;     /* neutral — editor-local utilities */
+
+  --radius: 8px;
+  --font: ui-sans-serif, system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --mono: ui-monospace, "Cascadia Code", "Consolas", monospace;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 14px;
+}
+
+body { display: flex; flex-direction: column; }
+
+/* Header — stacked title + source for a narrow panel */
+.wb-header {
+  display: flex; flex-direction: column; gap: 2px;
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--line);
+  background: var(--panel);
+}
+.wb-header h1 { margin: 0; font-size: 14px; letter-spacing: 0.3px; font-weight: 650; }
+.wb-source {
+  font-size: 11px; color: var(--muted);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+/* Layout — vertical stack for a narrow side panel: actions on top, editor below. */
+.wb-main { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+
+.wb-rail {
+  flex: 0 0 auto;
+  max-height: 45%;            /* actions take at most ~half; editor gets the rest */
+  padding: 10px 12px; overflow-y: auto;
+  border-bottom: 1px solid var(--line);
+  background: var(--panel);
+  display: flex; flex-direction: column; gap: 12px;
+}
+
+/* Zones — each carries a section color via --c, shown as a left stripe + title hue. */
+.wb-zone {
+  display: flex; flex-direction: column; gap: 6px;
+  padding: 9px 10px 10px 12px;
+  border-left: 2px solid var(--c, var(--line));
+  border-radius: 0 var(--radius) var(--radius) 0;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--c, transparent) 7%, transparent), transparent 60%);
+}
+.wb-zone:nth-of-type(1) { --c: var(--capture); }   /* Capture */
+.wb-zone:nth-of-type(2) { --c: var(--view); }       /* View */
+.wb-zone--send { --c: var(--send); }                /* Send to AI (the outbound group) */
+.wb-zone:nth-of-type(4) { --c: var(--tools); }      /* Editor tools */
+
+.wb-zone-title {
+  margin: 0; font-size: 10px; text-transform: uppercase;
+  letter-spacing: 1.2px; font-weight: 700; color: var(--c, var(--accent));
+}
+.wb-zone-hint { margin: 0 0 2px; font-size: 10.5px; color: var(--muted); line-height: 1.35; }
+
+/* Buttons — three weights: primary (the one consequential action) > plain > ghost. */
+.wb-act {
+  display: flex; align-items: center; justify-content: space-between; gap: 6px;
+  padding: 7px 10px;
+  background: var(--panel-2); color: var(--text);
+  border: 1px solid var(--line); border-radius: var(--radius);
+  font: inherit; font-size: 12.5px; text-align: left; cursor: pointer;
+  transition: background .12s, border-color .12s, color .12s;
+}
+.wb-act:hover { background: var(--panel-3); border-color: #3a414c; }
+.wb-act:active { transform: translateY(1px); }
+/* Primary = the outbound action. Amber-filled so it can't be mistaken for a sub-action. */
+.wb-act--primary {
+  background: var(--send-2); border-color: var(--send-2); color: #1a1206;
+  font-weight: 650; justify-content: center;
+}
+.wb-act--primary:hover { background: var(--send); border-color: var(--send); }
+/* Ghost = the quiet sibling of a primary action. */
+.wb-act--ghost { background: transparent; color: var(--muted); justify-content: center; font-size: 12px; }
+.wb-act--ghost:hover { background: var(--panel-2); color: var(--text); }
+
+.wb-copy-row { display: flex; gap: 6px; }
+.wb-copy-row .wb-act--primary { flex: 1; }
+
+.wb-select {
+  background: var(--panel-2); color: var(--text);
+  border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 0 8px; height: 28px; font: inherit; font-size: 12.5px; cursor: pointer;
+}
+
+/* Send "Options" disclosure — the format/context-pack/instruction knobs hide here so the
+   default view is just the one outbound action. Power is one click away, noise is gone. */
+.wb-options { margin-top: 2px; }
+.wb-options > summary {
+  list-style: none; cursor: pointer; user-select: none;
+  font-size: 11px; color: var(--muted); padding: 2px 0;
+  display: inline-flex; align-items: center; gap: 5px;
+}
+.wb-options > summary::-webkit-details-marker { display: none; }
+.wb-options > summary::before {
+  content: "▸"; font-size: 9px; transition: transform .12s; color: var(--send);
+}
+.wb-options[open] > summary::before { transform: rotate(90deg); }
+.wb-options > summary:hover { color: var(--text); }
+.wb-options:not([open]) > .wb-options-body { display: none; }
+.wb-options[open] > .wb-options-body {
+  display: flex; flex-direction: column; gap: 8px;
+  margin-top: 7px; padding-top: 8px; border-top: 1px dashed var(--line);
+}
+
+/* Labelled field: a label row + a full-width select under it */
+.wb-field { display: flex; flex-direction: column; gap: 3px; }
+.wb-field-label {
+  font-size: 10px; text-transform: uppercase; letter-spacing: .6px; color: var(--muted);
+}
+.wb-field .wb-select { width: 100%; }
+
+/* Checkbox toggle row (Context Pack) */
+.wb-check {
+  display: flex; align-items: flex-start; gap: 7px;
+  font-size: 12px; color: var(--text); cursor: pointer; line-height: 1.35;
+}
+.wb-check input { margin: 2px 0 0; accent-color: var(--send); cursor: pointer; }
+.wb-check-hint { color: var(--muted); font-size: 10px; display: block; }
+
+/* Editor */
+.wb-editor-wrap { flex: 1; display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+.wb-editor-bar {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 6px 8px 6px 14px; border-bottom: 1px solid var(--line);
+  background: var(--panel-2);
+}
+.wb-editor-label { font-size: 12px; color: var(--muted); letter-spacing: .5px; }
+.wb-editor-bar-right { display: flex; align-items: center; gap: 8px; }
+.wb-charcount { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+/* Icon buttons live IN the editor bar (Clear, Collapse) — off the action menu. */
+.wb-iconbtn {
+  width: 26px; height: 24px; display: grid; place-items: center;
+  background: transparent; color: var(--muted);
+  border: 1px solid transparent; border-radius: 6px;
+  font-size: 13px; line-height: 1; cursor: pointer;
+  transition: background .12s, color .12s, border-color .12s;
+}
+.wb-iconbtn:hover { background: var(--panel-3); color: var(--text); border-color: var(--line); }
+.wb-iconbtn--danger:hover { color: var(--danger); border-color: color-mix(in srgb, var(--danger) 50%, transparent); }
+
+.wb-editor {
+  flex: 1; resize: none; border: 0; outline: none;
+  padding: 12px 14px;
+  background: var(--bg); color: var(--text);
+  font-family: var(--mono); font-size: 12.5px; line-height: 1.5;
+  tab-size: 2;
+}
+
+/* Collapsed editor: the textarea folds away and the rail reclaims the space (back to the menu). */
+body.editor-collapsed .wb-rail { max-height: none; flex: 1; }
+body.editor-collapsed .wb-editor { display: none; }
+body.editor-collapsed .wb-editor-wrap { flex: 0 0 auto; }
+
+/* Status */
+.wb-status {
+  padding: 7px 14px; border-top: 1px solid var(--line);
+  background: var(--panel); color: var(--muted); font-size: 12px;
+  min-height: 30px;
+}
+.wb-status.is-ok { color: #98c379; }
+.wb-status.is-err { color: var(--danger); }
+.wb-status.is-warn { color: #e5c07b; }

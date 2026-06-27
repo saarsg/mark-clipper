@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Web Helper · Workbench</title>
+  <link rel="stylesheet" href="workbench.css">
+</head>
+<body>
+  <header class="wb-header">
+    <h1>Web&nbsp;Helper</h1>
+    <div class="wb-source" id="source-info">No source page yet — click the extension icon on a page.</div>
+  </header>
+
+  <main class="wb-main">
+    <!-- LEFT: action zones -->
+    <aside class="wb-rail">
+      <section class="wb-zone" aria-labelledby="z-capture">
+        <h2 id="z-capture" class="wb-zone-title">Capture</h2>
+        <p class="wb-zone-hint">Pull content from the source page into the editor at your cursor.</p>
+        <button class="wb-act" data-feature="capture-md">Capture as Markdown</button>
+        <button class="wb-act" data-feature="clip-selection" title="Insert the selected text as an attributed quote at your cursor">Clip selection</button>
+      </section>
+
+      <section class="wb-zone" aria-labelledby="z-view">
+        <h2 id="z-view" class="wb-zone-title">View</h2>
+        <p class="wb-zone-hint">Extract structure from the source page.</p>
+        <button class="wb-act" data-feature="extract-tables">Extract Tables</button>
+        <button class="wb-act" data-feature="page-meta">Page Metadata</button>
+      </section>
+
+      <!-- SEND TO AI — one primary action; the knobs live behind Options. -->
+      <section class="wb-zone wb-zone--send" aria-labelledby="z-send">
+        <h2 id="z-send" class="wb-zone-title">Send to AI</h2>
+        <p class="wb-zone-hint">Copy the editor content to an AI chat.</p>
+
+        <div class="wb-copy-row">
+          <select id="ai-provider" class="wb-select" title="Which AI to open">
+            <option value="claude">Claude</option>
+            <option value="chatgpt">ChatGPT</option>
+            <option value="gemini">Gemini</option>
+          </select>
+          <button class="wb-act wb-act--primary" data-doc="copy-to-ai">Copy &amp; Open</button>
+        </div>
+
+        <details class="wb-options" id="send-options">
+          <summary>Options</summary>
+          <div class="wb-options-body">
+            <label class="wb-field">
+              <span class="wb-field-label">Format</span>
+              <select id="out-format" class="wb-select" title="Output format">
+                <option value="markdown">Markdown</option>
+                <option value="html">HTML (from markdown)</option>
+                <option value="plain">Plain text</option>
+                <option value="json">JSON envelope</option>
+              </select>
+            </label>
+            <label class="wb-check" title="Wraps the content in a titled frontmatter block and XML &lt;document&gt; tags, then appends your chosen instruction after it — so the model reads the page as bounded data, then your task.">
+              <input type="checkbox" id="ctx-pack">
+              <span>Context Pack <span class="wb-check-hint">wrap as data + task</span></span>
+            </label>
+            <label class="wb-field">
+              <span class="wb-field-label">Instruction</span>
+              <select id="prompt-template" class="wb-select" title="A preset prompt prepended (Context Pack off) or appended after the document (Context Pack on). Optional."></select>
+            </label>
+            <button class="wb-act wb-act--ghost" data-doc="copy-only" title="Copy the same payload without opening a tab">Copy only</button>
+          </div>
+        </details>
+      </section>
+
+      <!-- EDITOR TOOLS — produce content into the editor (not sent anywhere). -->
+      <section class="wb-zone" aria-labelledby="z-tools">
+        <h2 id="z-tools" class="wb-zone-title">Editor tools</h2>
+        <p class="wb-zone-hint">Build up the editor content.</p>
+
+        <button class="wb-act" data-doc="insert-source-link" title="Insert a markdown link + the source URL from the captured page">Insert source link</button>
+        <button class="wb-act" data-doc="export-md">Export file</button>
+      </section>
+    </aside>
+
+    <!-- RIGHT: editor -->
+    <section class="wb-editor-wrap">
+      <div class="wb-editor-bar">
+        <span class="wb-editor-label">Editor · Markdown</span>
+        <span class="wb-editor-bar-right">
+          <span class="wb-charcount" id="charcount">0 chars</span>
+          <button class="wb-iconbtn wb-iconbtn--danger" data-doc="clear" title="Clear editor" aria-label="Clear editor">⌫</button>
+          <button class="wb-iconbtn" id="toggle-editor" data-doc="toggle-editor" title="Collapse editor (back to menu)" aria-label="Collapse editor">▾</button>
+        </span>
+      </div>
+      <textarea id="editor" class="wb-editor" spellcheck="false"
+        placeholder="Captured content lands here. Edit freely, then shape it under Send to AI."></textarea>
+    </section>
+  </main>
+
+  <footer class="wb-status" id="status" role="status">Ready.</footer>
+
+  <script src="workbench.js"></script>
+</body>
+</html>
