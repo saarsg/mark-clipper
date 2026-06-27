@@ -1,3 +1,5 @@
+![Web Helper — a cluttered web page distilled into clean structured markdown](docs/banner.png)
+
 # Web Helper
 
 A side-panel workbench for capturing web pages and selections as clean markdown —
