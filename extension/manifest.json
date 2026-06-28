@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Web Helper",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Personal web workbench: capture page/selection content as markdown, edit it, export or send to an AI chat.",
   "permissions": ["scripting", "storage", "clipboardWrite", "tabs", "sidePanel"],
   "host_permissions": ["<all_urls>"],

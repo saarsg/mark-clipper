@@ -90,7 +90,7 @@ would hijack an AI you later paste it into, including ones invisible on screen. 
 - **Never auto-submits.** "Copy & Open" only puts text on your clipboard and opens the AI tab;
   *you* paste — the human stays in the loop.
 
-**Permissions (as of v0.3.0):** `scripting`, `storage`, `clipboardWrite`, `tabs`, `sidePanel`, and
+**Permissions (as of v0.4.0):** `scripting`, `storage`, `clipboardWrite`, `tabs`, `sidePanel`, and
 `host_permissions: ["<all_urls>"]`. The host permission is the deliberate non-minimal choice — it
 enables auto-follow (scripting any tab without a per-click gesture) at the cost of read access to
 every page you visit. Earlier versions used `activeTab` (click-tab only, no host access); that was
