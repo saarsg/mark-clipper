@@ -28,24 +28,21 @@ edit it locally, then copy or export it to the AI assistant of your choice.
 
 ### 1. Get the extension
 
-**With git:**
+Download the latest release ZIP and unzip it:
 
-```bash
-git clone https://github.com/saarsg/web-helper.git
-```
+**→ [web-helper-v0.4.0.zip](https://github.com/saarsg/web-helper/releases/latest/download/web-helper-v0.4.0.zip)**
 
-**Or download the ZIP** (no git): grab
-**[main.zip](https://github.com/saarsg/web-helper/archive/refs/heads/main.zip)**
-and unzip it.
+It unzips to a folder containing `manifest.json` and the extension files directly
+— that folder is exactly what you load, nothing to dig into.
 
-Either way you end up with a `web-helper/` folder containing an **`extension/`**
-subfolder — that subfolder is what you load next.
+> Prefer the source? `git clone https://github.com/saarsg/web-helper.git` — then
+> load the **`extension/`** subfolder instead (Chrome ignores the repo's other files).
 
 ### 2. Load it in your browser
 
 1. Open `chrome://extensions` (or `edge://extensions` / `brave://extensions`).
 2. Toggle **Developer mode** (top-right).
-3. Click **Load unpacked** → select the **`extension`** folder.
+3. Click **Load unpacked** → select the unzipped folder (the one with `manifest.json`).
 4. Pin it from the puzzle-piece menu.
 
 ### 3. First run
