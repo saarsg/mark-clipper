@@ -23,21 +23,40 @@ edit it locally, then copy or export it to the AI assistant of your choice.
 
 ## Install
 
-### From the Chrome Web Store
+> **Chrome Web Store:** listing is under review — coming soon. Until then, install
+> unpacked in three steps below (30 seconds, no build step).
 
-Install from the listing, pin the icon, and click it to open the side panel.
+### 1. Get the extension
 
-### Unpacked (for development)
+**With git:**
 
-1. Open `chrome://extensions` (or `edge://extensions`).
+```bash
+git clone https://github.com/saarsg/web-helper.git
+```
+
+**Or download the ZIP** (no git): grab
+**[main.zip](https://github.com/saarsg/web-helper/archive/refs/heads/main.zip)**
+and unzip it.
+
+Either way you end up with a `web-helper/` folder containing an **`extension/`**
+subfolder — that subfolder is what you load next.
+
+### 2. Load it in your browser
+
+1. Open `chrome://extensions` (or `edge://extensions` / `brave://extensions`).
 2. Toggle **Developer mode** (top-right).
-3. Click **Load unpacked** → select the `extension` folder.
+3. Click **Load unpacked** → select the **`extension`** folder.
 4. Pin it from the puzzle-piece menu.
 
-On first use, Chrome warns that the extension can **read your data on all
-websites**. That is the `host_permissions` it uses to auto-follow your active tab
-— see [Permissions and security](#permissions-and-security) for exactly what that
-does and does not mean.
+### 3. First run
+
+Click the icon — the side panel opens. Chrome warns the extension can **read your
+data on all websites**: that is the `host_permissions` it uses to auto-follow your
+active tab — see [Permissions and security](#permissions-and-security) for what
+that does and does not mean.
+
+**Updating:** `git pull` (or re-download the ZIP), then click the circular-arrow
+**reload** icon on the extension's card in `chrome://extensions`.
 
 ## Usage
 
@@ -82,54 +101,46 @@ of its own.
 ### Page content is treated as untrusted
 
 A captured page can carry prompt-injection payloads aimed at an AI you later paste
-into. So every markdown capture:
+into — including ones invisible to you on screen. The guiding rule is **what you
+paste is what you could have seen**: every markdown capture closes the invisible
+traps and frames the rest as data.
 
-- **Strips hidden elements** (`display:none` / `visibility:hidden` / `aria-hidden`
-  / `hidden`) and structural noise (`script`/`style`/`iframe`/`nav`/`footer`…)
-  before conversion. *Limit:* class-based hiding via external stylesheets isn't
-  detectable in a detached clone.
+- **Captures only what's actually visible.** Hidden elements are detected on the
+  live, rendered page (computed style + geometry) and dropped before conversion —
+  `display:none`, `visibility:hidden`, `opacity:0` (incl. near-zero), off-screen
+  positioning, zero-size, `clip` / `clip-path`, the `.sr-only` pattern,
+  `aria-hidden`, plus structural noise (`script`/`iframe`/`nav`/…). This also
+  catches **class- and stylesheet-based hiding**, not just inline styles.
+- **Neutralizes invisible Unicode** used to smuggle instructions — the Unicode
+  Tags block ("ASCII smuggling"), zero-width and bidi-override characters — each
+  replaced with a visible `␟` marker, with a count noted in the capture so you can
+  see the page tried to hide something.
+- **Strips exfiltration and active-content vectors** in the markdown: external and
+  `data:` image URLs (auto-fetch exfil) → text placeholders, HTML comments,
+  `on*` event handlers, and unsafe link schemes (`javascript:` / `data:` / …).
 - **Wraps output in an UNTRUSTED-CONTENT fence** so a downstream AI or human sees
-  it is data, not instructions.
-- **Sanitizes** surviving raw HTML, `data:` image URIs, and `javascript:` links.
-- **Never auto-submits** — Copy & Open only puts text on your clipboard and opens
-  the tab; you paste.
+  it is data, not instructions — and **never auto-submits**: Copy & Open only puts
+  text on your clipboard; you paste.
 
-Full per-permission justifications, as submitted to the Chrome Web Store, are in
+**Full threat model — what's defended, and the honest limits — is in
+[`docs/security.md`](docs/security.md).** Per-permission justifications (as submitted
+to the Chrome Web Store) are in
 [`docs/permission-justifications.md`](docs/permission-justifications.md).
 
-### Known limits (no hedging)
-
-- Class-based hidden-text stripping has the limit above — fine for common
-  low-effort injection, not a guarantee.
-- Context Pack neutralizes a forged `</document>` delimiter in realistic forms;
-  exotic split forms like `< /document>` aren't covered — an accepted limit for a
-  personal tool.
-- The **plain-text** format drops the frontmatter and the `>` marker, weakening
-  the untrusted-content warning. Prefer markdown / HTML / JSON when the destination
-  AI should see the data/instructions boundary (Context Pack re-asserts it anyway).
+The one limit worth stating up front: these defenses stop *invisible* traps, not
+**visible** adversarial prose written in plain sight. That is real content; the
+UNTRUSTED-CONTENT fence plus the receiving AI are its only guard.
 
 An API-key "summarize on device" path is **deliberately not built** — it would
 send page content off-machine, breaking the never-auto-submit invariant. It's held
 for an explicit opt-in.
 
-## How it works (architecture)
+## How it works
 
-- **Side panel** (`chrome.sidePanel`), not a popup. `background.js` opens it on
-  icon click and tracks `tabs.onActivated` / `onUpdated` / `windows.onFocusChanged`
-  to keep the capture source following your active tab, writing it to
-  `storage.local` for the panel to read.
-- **Capture features** inject a small script (`features/<id>.js`) into the source
-  tab via `chrome.scripting.executeScript`, in the page's isolated world, and
-  return data to the workbench. Markdown features reuse one shared pipeline
-  (`features/_md-setup.js`).
-- **Feature contract:** every feature is one id, one verb-noun name, one output,
-  one UI zone. Editor writes funnel through a single `insertAt` primitive so
-  captures land at the cursor.
-- **Persistence:** editor content lives in `chrome.storage.local` — survives a
-  restart, stays on this machine, never synced.
-
-For the full technical reference (feature table, adding a feature, browser
-support), see [`extension/README.md`](extension/README.md).
+Built on Chrome's side panel + `scripting` APIs; the capture source auto-follows
+your active tab. For the full technical reference — architecture, the feature
+table, how to add a feature, and browser support — see
+[`extension/README.md`](extension/README.md).
 
 ## License
 

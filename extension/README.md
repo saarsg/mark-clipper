@@ -4,17 +4,8 @@ A personal Chromium **web workbench**. Click the toolbar icon to open a docked *
 capture page or selection content as clean markdown, edit it, then export it or send it to an
 AI chat (Claude / ChatGPT / Gemini). The page stays visible beside the panel.
 
-## Install (unpacked)
-
-1. Open `chrome://extensions` (or `edge://extensions`).
-2. Toggle **Developer mode** (top-right).
-3. Click **Load unpacked** → select this `extension` folder.
-4. Pin it from the puzzle-piece menu.
-5. Click the icon → the **side panel** opens. Chrome will warn that the extension can **read your
-   data on all websites** — that's the `host_permissions` it uses to auto-follow the active tab.
-6. The capture **source auto-follows the active tab**: whatever page is in front is what the capture
-   features read. The panel header always shows the current source URL — glance at it to see what
-   *will* be captured.
+> **This is the contributor / technical reference.** For install and usage, see the
+> [project README](../README.md).
 
 ## How it works
 
@@ -78,15 +69,24 @@ Collapse folds the editor away so the action menu reclaims the space. The bar sh
 ## Security model
 
 Page content is treated as **untrusted input** — it can carry prompt-injection payloads that
-would hijack an AI you later paste it into. Every markdown capture therefore:
+would hijack an AI you later paste it into, including ones invisible on screen. Guiding rule:
+*what you paste is what you could have seen.* Every markdown capture (`features/_md-setup.js`):
 
-- **Strips hidden elements** (`display:none` / `visibility:hidden` / `aria-hidden` / `hidden`)
-  and structural noise (`script`/`style`/`iframe`/`svg`/`nav`/`footer`…) before conversion —
-  closing the main invisible-injection vector. *Limit:* class-based hiding via external
-  stylesheets is not detectable in a detached clone.
-- **Wraps output in an UNTRUSTED-CONTENT fence** (frontmatter `warning:` + a visible banner)
-  so any downstream AI/human sees the content is data, not instructions.
-- **Sanitizes** surviving raw HTML, `data:` image URIs, and `javascript:` links.
+- **Captures only what's visible.** `tagHidden`/`isInvisible` test the **live, rendered** node
+  (`checkVisibility` + computed style + `getBoundingClientRect`): `display:none`,
+  `visibility:hidden|collapse`, `opacity` < 0.05, off-screen (document-coord), zero-area,
+  `text-indent`, `clip`/`clip-path`, the `.sr-only` composite, `aria-hidden`/`[hidden]` and
+  structural noise. Hidden nodes are tagged live, then stripped on the clone — so this resolves
+  the cascade and catches **class/stylesheet hiding**, not just inline styles.
+- **Neutralizes invisible Unicode** (`neutralizeInvisible`): Unicode Tags block (U+E0000–E007F),
+  variation-selector supplement, zero-width / word-joiner / invisible-math / soft-hyphen /
+  mid-string BOM, LRO/RLO overrides → replaced with a visible `␟` marker; a count is recorded in
+  the fence. RTL marks, ZWJ/ZWNJ, and VS1–16 are deliberately kept (false-positive risk).
+- **Strips active/exfil vectors** (`postProcess`): external + `data:` image URLs → text
+  placeholder, HTML comments, `on*` handlers, unsafe link schemes (`javascript:`/`vbscript:`/
+  `data:`/`file:`); raw HTML kept to a small inline allowlist.
+- **Wraps output in an UNTRUSTED-CONTENT fence** (frontmatter `warning:` + visible banner) so a
+  downstream AI/human sees the content is data, not instructions.
 - **Never auto-submits.** "Copy & Open" only puts text on your clipboard and opens the AI tab;
   *you* paste — the human stays in the loop.
 
@@ -110,11 +110,9 @@ permission grants *reading* pages, not sending them anywhere.
 
 ## Caveats
 
-- Class-based hidden-text stripping has the limit noted above — fine for the common low-effort
-  injection, not a guarantee.
-- Context Pack neutralizes a forged `</document>` delimiter in the body (the realistic literal /
-  attributed / case forms). Exotic split forms like `< /document>` aren't covered — an accepted
-  limit for opportunistic page injection on a personal tool, not a hardened guarantee.
+- The capture defenses stop *invisible* traps, not **visible** adversarial prose written in plain
+  sight — that's residual, guarded only by the fence + the receiving AI. Full threat model and
+  honest limits: [`docs/security.md`](../docs/security.md).
 - **Plain-text format weakens the untrusted-content fence.** `plain` output drops the frontmatter
   and strips the `>` marker off the UNTRUSTED-CONTENT banner, so the warning reads as ordinary
   prose. Markdown, HTML, and JSON keep the warning text intact — prefer those when the destination

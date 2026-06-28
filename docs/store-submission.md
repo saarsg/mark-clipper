@@ -25,6 +25,9 @@ YAML frontmatter, a markdown source link, and a prompt instruction.
 - Optional: wrap content in a Context Pack (frontmatter + document block), pick a
   prompt instruction, choose an output format (markdown / HTML / plain / JSON),
   or export a file.
+- Treats captured pages as untrusted: removes invisible/hidden text and smuggled
+  instructions (prompt-injection protection) so what you paste is what you could
+  actually see.
 
 **What it does not do**
 
