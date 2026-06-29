@@ -120,8 +120,14 @@ async function resolveSourceTabId(src) {
 // ---------- feature dispatch (Capture / View zones) ----------
 // URLs Chrome won't let any extension script into — internal pages, the web store, view-source.
 function isRestrictedUrl(url) {
-  return !url || /^(chrome|edge|brave|about|view-source|chrome-extension|devtools):/i.test(url) ||
-    url.startsWith('https://chromewebstore.google.com') || url.startsWith('https://chrome.google.com/webstore');
+  if (!url) return true;
+  if (/^(chrome|edge|brave|about|view-source|chrome-extension|devtools):/i.test(url)) return true;
+  // Match on parsed host (not a substring) so e.g. chromewebstore.google.com.evil.com isn't treated
+  // as the store. Malformed URLs throw — treat the unparseable as restricted (fail safe).
+  let u;
+  try { u = new URL(url); } catch { return true; }
+  return u.hostname === 'chromewebstore.google.com' ||
+    (u.hostname === 'chrome.google.com' && u.pathname.startsWith('/webstore'));
 }
 
 async function runFeature(featureId) {

