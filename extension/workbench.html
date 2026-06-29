@@ -11,27 +11,53 @@
     <div class="wb-source" id="source-info">No source page yet — click the extension icon on a page.</div>
   </header>
 
+  <!-- Tab bar — Normal (input→output pipeline) vs Advanced (AI send + future workflows). -->
+  <nav class="wb-tabs" role="tablist" aria-label="Panel sections">
+    <button class="wb-tab is-active" id="tab-btn-normal" role="tab" aria-selected="true"
+      aria-controls="tab-normal" data-tab="normal">Normal</button>
+    <button class="wb-tab" id="tab-btn-advanced" role="tab" aria-selected="false"
+      aria-controls="tab-advanced" data-tab="advanced">Advanced</button>
+  </nav>
+
   <main class="wb-main">
-    <!-- LEFT: action zones -->
-    <aside class="wb-rail">
-      <section class="wb-zone" aria-labelledby="z-capture">
-        <h2 id="z-capture" class="wb-zone-title">Capture</h2>
-        <p class="wb-zone-hint">Pull content from the source page into the editor at your cursor.</p>
-        <button class="wb-act" data-feature="capture-md">Capture as Markdown</button>
-        <button class="wb-act" data-feature="clip-selection" title="Insert the selected text as an attributed quote at your cursor">Clip selection</button>
-      </section>
+    <!-- NORMAL TAB — capture content in, shape it out, edit it. -->
+    <section class="wb-tabpanel" id="tab-normal" role="tabpanel" aria-labelledby="tab-btn-normal">
+      <div class="wb-rail">
+        <div class="wb-group" data-group="capture">
+          <span class="wb-group-cap">Capture</span>
+          <button class="wb-act" data-feature="capture-md"><span class="wb-act-ic"><svg class="wb-svg" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" focusable="false"><path d="M14 3a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zM2 2a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"/><path fill-rule="evenodd" d="M9.146 8.146a.5.5 0 0 1 .708 0L11.5 9.793l1.646-1.647a.5.5 0 0 1 .708.708l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 0 1 0-.708"/><path fill-rule="evenodd" d="M11.5 5a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0v-4a.5.5 0 0 1 .5-.5"/><path d="M3.56 11V7.01h.056l1.428 3.239h.774l1.42-3.24h.056V11h1.073V5.001h-1.2l-1.71 3.894h-.039l-1.71-3.894H2.5V11z"/></svg></span>Capture as Markdown</button>
+          <button class="wb-act" data-feature="clip-selection" title="Insert the selected text as an attributed quote at your cursor"><span class="wb-act-ic"><svg class="wb-svg" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 12a1 1 0 0 0 1-1V8.558a1 1 0 0 0-1-1h-1.388q0-.527.062-1.054.093-.558.31-.992t.559-.683q.34-.279.868-.279V3q-.868 0-1.52.372a3.3 3.3 0 0 0-1.085.992 4.9 4.9 0 0 0-.62 1.458A7.7 7.7 0 0 0 9 7.558V11a1 1 0 0 0 1 1zm-6 0a1 1 0 0 0 1-1V8.558a1 1 0 0 0-1-1H4.612q0-.527.062-1.054.094-.558.31-.992.217-.434.559-.683.34-.279.868-.279V3q-.868 0-1.52.372a3.3 3.3 0 0 0-1.085.992 4.9 4.9 0 0 0-.62 1.458A7.7 7.7 0 0 0 3 7.558V11a1 1 0 0 0 1 1z"/></svg></span>Clip selection</button>
+          <button class="wb-act" data-feature="extract-tables"><span class="wb-act-ic"><svg class="wb-svg" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" focusable="false"><path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm15 2h-4v3h4zm0 4h-4v3h4zm0 4h-4v3h3a1 1 0 0 0 1-1zm-5 3v-3H6v3zm-5 0v-3H1v2a1 1 0 0 0 1 1zm-4-4h4V8H1zm0-4h4V4H1zm5-3v3h4V4zm4 4H6v3h4z"/></svg></span>Extract Tables</button>
+          <button class="wb-act" data-feature="page-meta"><span class="wb-act-ic"><svg class="wb-svg" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" focusable="false"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/><path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/></svg></span>Page Metadata</button>
+        </div>
 
-      <section class="wb-zone" aria-labelledby="z-view">
-        <h2 id="z-view" class="wb-zone-title">View</h2>
-        <p class="wb-zone-hint">Extract structure from the source page.</p>
-        <button class="wb-act" data-feature="extract-tables">Extract Tables</button>
-        <button class="wb-act" data-feature="page-meta">Page Metadata</button>
-      </section>
+        <hr class="wb-divider">
 
-      <!-- SEND TO AI — one primary action; the knobs live behind Options. -->
+        <div class="wb-group" data-group="output">
+          <span class="wb-group-cap">Editor output</span>
+          <button class="wb-act" data-doc="insert-source-link" title="Insert a markdown link + the source URL from the captured page"><span class="wb-act-ic"><svg class="wb-svg" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" focusable="false"><path d="M4.715 6.542 3.343 7.914a3 3 0 1 0 4.243 4.243l1.828-1.829A3 3 0 0 0 8.586 5.5L8 6.086a1 1 0 0 0-.154.199 2 2 0 0 1 .861 3.337L6.88 11.45a2 2 0 1 1-2.83-2.83l.793-.792a4 4 0 0 1-.128-1.287z"/><path d="M6.586 4.672A3 3 0 0 0 7.414 9.5l.775-.776a2 2 0 0 1-.896-3.346L9.12 3.55a2 2 0 1 1 2.83 2.83l-.793.792c.112.42.155.855.128 1.287l1.372-1.372a3 3 0 1 0-4.243-4.243z"/></svg></span>Insert source link</button>
+          <button class="wb-act" data-doc="export-md"><span class="wb-act-ic"><svg class="wb-svg" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M3.5 6a.5.5 0 0 0-.5.5v8a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5v-8a.5.5 0 0 0-.5-.5h-2a.5.5 0 0 1 0-1h2A1.5 1.5 0 0 1 14 6.5v8a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 14.5v-8A1.5 1.5 0 0 1 3.5 5h2a.5.5 0 0 1 0 1z"/><path fill-rule="evenodd" d="M7.646.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 1.707V10.5a.5.5 0 0 1-1 0V1.707L5.354 3.854a.5.5 0 1 1-.708-.708z"/></svg></span>Export file</button>
+        </div>
+      </div>
+
+      <div class="wb-editor-wrap">
+        <div class="wb-editor-bar">
+          <span class="wb-editor-label">Editor · Markdown</span>
+          <span class="wb-editor-bar-right">
+            <span class="wb-charcount" id="charcount">0 chars</span>
+            <button class="wb-iconbtn wb-iconbtn--danger" data-doc="clear" title="Clear editor" aria-label="Clear editor"><svg class="wb-svg" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" focusable="false"><path d="M8.086 2.207a2 2 0 0 1 2.828 0l3.879 3.879a2 2 0 0 1 0 2.828l-5.5 5.5A2 2 0 0 1 7.879 15H5.12a2 2 0 0 1-1.414-.586l-2.5-2.5a2 2 0 0 1 0-2.828zm2.121.707a1 1 0 0 0-1.414 0L4.16 7.547l5.293 5.293 4.633-4.633a1 1 0 0 0 0-1.414zM8.746 13.547 3.453 8.254 1.914 9.793a1 1 0 0 0 0 1.414l2.5 2.5a1 1 0 0 0 .707.293H7.88a1 1 0 0 0 .707-.293z"/></svg></button>
+            <button class="wb-iconbtn" id="toggle-editor" data-doc="toggle-editor" title="Collapse editor (back to menu)" aria-label="Collapse editor"><svg class="wb-svg wb-svg-collapse" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708"/></svg></button>
+          </span>
+        </div>
+        <textarea id="editor" class="wb-editor" spellcheck="false"
+          placeholder="Captured content lands here. Edit freely, then shape it under the Advanced tab."></textarea>
+      </div>
+    </section>
+
+    <!-- ADVANCED TAB — send to AI + the option knobs + future workflows. -->
+    <section class="wb-tabpanel" id="tab-advanced" role="tabpanel" aria-labelledby="tab-btn-advanced" hidden>
       <section class="wb-zone wb-zone--send" aria-labelledby="z-send">
         <h2 id="z-send" class="wb-zone-title">Send to AI</h2>
-        <p class="wb-zone-hint">Copy the editor content to an AI chat.</p>
 
         <div class="wb-copy-row">
           <select id="ai-provider" class="wb-select" title="Which AI to open">
@@ -43,7 +69,7 @@
         </div>
 
         <details class="wb-options" id="send-options">
-          <summary>Options</summary>
+          <summary>Format &amp; instruction options</summary>
           <div class="wb-options-body">
             <label class="wb-field">
               <span class="wb-field-label">Format</span>
@@ -54,41 +80,62 @@
                 <option value="json">JSON envelope</option>
               </select>
             </label>
-            <label class="wb-check" title="Wraps the content in a titled frontmatter block and XML &lt;document&gt; tags, then appends your chosen instruction after it — so the model reads the page as bounded data, then your task.">
+            <label class="wb-check" title="Fences the page content inside &lt;document&gt; tags and puts your instruction outside it, so the AI treats the page as data — not commands. This is the guard against prompt-injection hidden in a scraped page: instructions buried in the content can't override your actual prompt. Off = page and prompt are sent together with no separation.">
               <input type="checkbox" id="ctx-pack">
-              <span>Context Pack <span class="wb-check-hint">wrap as data + task</span></span>
+              <span>Isolate page from prompt <span class="wb-check-hint">fence content as data (anti-injection)</span></span>
             </label>
             <label class="wb-field">
               <span class="wb-field-label">Instruction</span>
-              <select id="prompt-template" class="wb-select" title="A preset prompt prepended (Context Pack off) or appended after the document (Context Pack on). Optional."></select>
+              <select id="prompt-template" class="wb-select" title="A preset instruction. With page isolation off it's prepended to the content; with it on it's placed after the fenced document. Optional."></select>
             </label>
-            <button class="wb-act wb-act--ghost" data-doc="copy-only" title="Copy the same payload without opening a tab">Copy only</button>
+            <div class="wb-preset-row">
+              <button type="button" class="wb-act wb-act--ghost" id="prompt-new" title="Write and save your own instruction preset">+ Save your own</button>
+              <button type="button" class="wb-act wb-act--ghost" id="prompt-del" title="Delete the selected custom preset" hidden>Delete preset</button>
+            </div>
+            <div class="wb-preset-editor" id="prompt-editor" hidden>
+              <label class="wb-field">
+                <span class="wb-field-label">Preset name</span>
+                <input type="text" id="prompt-name" class="wb-input" maxlength="60" placeholder="e.g. Translate to French">
+              </label>
+              <label class="wb-field">
+                <span class="wb-field-label">Prompt text</span>
+                <textarea id="prompt-text" class="wb-textarea-sm" rows="3" maxlength="4000" placeholder="The instruction to prepend/append to the content…"></textarea>
+              </label>
+              <div class="wb-preset-row">
+                <button type="button" class="wb-act wb-act--primary" id="prompt-save">Save preset</button>
+                <button type="button" class="wb-act wb-act--ghost" id="prompt-cancel">Cancel</button>
+              </div>
+            </div>
           </div>
         </details>
       </section>
 
-      <!-- EDITOR TOOLS — produce content into the editor (not sent anywhere). -->
-      <section class="wb-zone" aria-labelledby="z-tools">
-        <h2 id="z-tools" class="wb-zone-title">Editor tools</h2>
-        <p class="wb-zone-hint">Build up the editor content.</p>
+      <!-- WORKFLOWS — saved sequences of actions run on one click. -->
+      <section class="wb-zone wb-zone--flow" aria-labelledby="z-flow">
+        <h2 id="z-flow" class="wb-zone-title">Workflows</h2>
+        <p class="wb-zone-hint">A saved sequence of actions run on one click. Steps run top-to-bottom;
+          a failed step is skipped and the rest continue.</p>
 
-        <button class="wb-act" data-doc="insert-source-link" title="Insert a markdown link + the source URL from the captured page">Insert source link</button>
-        <button class="wb-act" data-doc="export-md">Export file</button>
+        <!-- Saved workflows render here as runnable rows (workbench.js renderWorkflows). -->
+        <div id="wf-list" class="wb-wf-list"></div>
+
+        <button type="button" class="wb-act wb-act--ghost" id="wf-new" title="Build a new workflow">+ New workflow</button>
+
+        <!-- Builder — the single opener is "+ New workflow" (toggles this); Save/Cancel close it. -->
+        <div class="wb-builder" id="wf-builder" hidden>
+          <div id="wf-steps" class="wb-wf-steps"></div>
+          <button type="button" class="wb-act wb-act--ghost" data-wf="add-step">+ Add step</button>
+          <label class="wb-field">
+            <span class="wb-field-label">Workflow name</span>
+            <input type="text" id="wf-name" class="wb-input" maxlength="60"
+              placeholder="e.g. Capture + Tables + Meta → ChatGPT">
+          </label>
+          <div class="wb-preset-row">
+            <button type="button" class="wb-act wb-act--primary" data-wf="save">Save workflow</button>
+            <button type="button" class="wb-act wb-act--ghost" data-wf="cancel">Cancel</button>
+          </div>
+        </div>
       </section>
-    </aside>
-
-    <!-- RIGHT: editor -->
-    <section class="wb-editor-wrap">
-      <div class="wb-editor-bar">
-        <span class="wb-editor-label">Editor · Markdown</span>
-        <span class="wb-editor-bar-right">
-          <span class="wb-charcount" id="charcount">0 chars</span>
-          <button class="wb-iconbtn wb-iconbtn--danger" data-doc="clear" title="Clear editor" aria-label="Clear editor">⌫</button>
-          <button class="wb-iconbtn" id="toggle-editor" data-doc="toggle-editor" title="Collapse editor (back to menu)" aria-label="Collapse editor">▾</button>
-        </span>
-      </div>
-      <textarea id="editor" class="wb-editor" spellcheck="false"
-        placeholder="Captured content lands here. Edit freely, then shape it under Send to AI."></textarea>
     </section>
   </main>
 

@@ -11,20 +11,27 @@
   --panel-2: #21252c;
   --panel-3: #262b33;
   --line: #2c313a;
-  --text: #e7eaef;
-  --muted: #9aa3b2;
-  --accent: #6ea8fe;
-  --accent-2: #3d6fd6;
+  --text: #f4f6fa;      /* primary text — bright for legibility over the section washes */
+  --muted: #c7cedb;     /* secondary text — brightened hard: grey was too vague to read casually */
+
+  /* Brand: the green node from the logo/store icon is the identity + primary action color. */
+  --brand: #49dc7f;     /* hero-node green — sampled from the store icon */
+  --accent: #49dc7f;    /* identity accent: tab underline, focus ring, input focus */
+  --accent-2: #36b566;  /* deeper green — hover/pressed of green surfaces */
+  --primary-ink: #06210f; /* dark green-black ink on a green fill (~10:1 contrast) */
+  --focus: #49dc7f;     /* explicit :focus-visible ring */
   --danger: #e06c75;
 
   /* section temperatures */
-  --capture: #6ea8fe;   /* cool blue — pull content in */
-  --view: #4fd1c5;      /* teal — inspect / extract */
-  --send: #e8a13c;      /* warm amber — the outbound, consequential action */
-  --send-2: #c9831f;    /* amber, deeper — primary button fill */
+  --capture: #6ea8fe;   /* cool blue — pull content in (echoes the promo marquee streams) */
+  --view: #4fd1c5;      /* teal — inspect / extract / workflows */
+  --send: #49dc7f;      /* brand green — the outbound, consequential action (amber retired) */
+  --send-2: #49dc7f;    /* brand green — primary button fill */
   --tools: #8b93a3;     /* neutral — editor-local utilities */
 
   --radius: 8px;
+  /* Two faces only: a display face for section titles, one body face for everything else. */
+  --font-display: "Segoe UI", system-ui, ui-sans-serif, Roboto, "Helvetica Neue", Arial, sans-serif;
   --font: ui-sans-serif, system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --mono: ui-monospace, "Cascadia Code", "Consolas", monospace;
 }
@@ -42,6 +49,13 @@ html, body {
 
 body { display: flex; flex-direction: column; }
 
+/* Keyboard focus ring — brand green, on every interactive control (none existed before). Uses
+   :focus-visible so a mouse click doesn't draw it, only keyboard/AT navigation. */
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.wb-act:focus-visible, .wb-iconbtn:focus-visible, .wb-tab:focus-visible,
+.wb-select:focus-visible, .wb-input:focus-visible, .wb-textarea-sm:focus-visible,
+.wb-editor:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
 /* Header — stacked title + source for a narrow panel */
 .wb-header {
   display: flex; flex-direction: column; gap: 2px;
@@ -49,14 +63,36 @@ body { display: flex; flex-direction: column; }
   border-bottom: 1px solid var(--line);
   background: var(--panel);
 }
-.wb-header h1 { margin: 0; font-size: 14px; letter-spacing: 0.3px; font-weight: 650; }
+.wb-header h1 { margin: 0; font-family: var(--font-display); font-size: 15px; letter-spacing: 0.2px; font-weight: 800; }
+/* TIER 3 — quiet meta (source URL): brightened muted, readable but secondary. */
 .wb-source {
-  font-size: 11px; color: var(--muted);
+  font-size: 11px; color: var(--muted); font-weight: 500;
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 
-/* Layout — vertical stack for a narrow side panel: actions on top, editor below. */
+/* Tabs — Normal vs Advanced. Underline indicator on the active tab; quiet otherwise. */
+.wb-tabs {
+  display: flex; gap: 4px;
+  padding: 0 12px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--line);
+}
+.wb-tab {
+  background: none; border: 0; cursor: pointer;
+  padding: 8px 10px 7px; margin-bottom: -1px;
+  font: inherit; font-size: 12.5px; font-weight: 700; color: var(--muted);
+  border-bottom: 2px solid transparent;
+  transition: color .12s, border-color .12s;
+}
+.wb-tab:hover { color: var(--text); }
+.wb-tab.is-active { color: var(--text); border-bottom-color: var(--accent); }
+
+/* Tab panels — only the active one shows; it fills the column like the old main did. */
 .wb-main { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+.wb-tabpanel { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+.wb-tabpanel[hidden] { display: none; }
+/* The Advanced panel is a scrolling stack of zones (no editor to flex-fill). */
+#tab-advanced { overflow-y: auto; padding: 10px 12px; gap: 10px; background: var(--panel); }
 
 .wb-rail {
   flex: 0 0 auto;
@@ -64,27 +100,79 @@ body { display: flex; flex-direction: column; }
   padding: 10px 12px; overflow-y: auto;
   border-bottom: 1px solid var(--line);
   background: var(--panel);
-  display: flex; flex-direction: column; gap: 12px;
+  display: flex; flex-direction: column; gap: 10px;
 }
 
-/* Zones — each carries a section color via --c, shown as a left stripe + title hue. */
+/* Quiet groups inside the Normal rail — buttons clustered, split by a bare divider, no labels. */
+.wb-group { display: flex; flex-direction: column; gap: 6px; }
+.wb-divider { border: 0; border-top: 1px solid var(--line); margin: 2px 0; }
+
+/* Zones — each carries a section color via --c. No left stripe (reads as generic); instead the
+   section is defined by light: a DISSOLVING gradient border (bright at the top-left, fading to
+   nothing) over a vivid color wash, plus a soft inner glow. "Defined by light, not a line."
+   Colors are set per-zone class (not :nth-of-type) so they survive the tab split. */
 .wb-zone {
   display: flex; flex-direction: column; gap: 6px;
-  padding: 9px 10px 10px 12px;
-  border-left: 2px solid var(--c, var(--line));
-  border-radius: 0 var(--radius) var(--radius) 0;
-  background: linear-gradient(90deg, color-mix(in srgb, var(--c, transparent) 7%, transparent), transparent 60%);
+  padding: 10px 11px 11px;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  /* padding-box = the vivid wash; border-box = the dissolving gradient edge. Both fade over a
+     longer distance (softer, smoother) than the first cut, which read too sharp. */
+  background:
+    linear-gradient(125deg, color-mix(in srgb, var(--c, transparent) 17%, transparent), transparent 78%) padding-box,
+    linear-gradient(140deg, color-mix(in srgb, var(--c, var(--line)) 55%, transparent), color-mix(in srgb, var(--c, var(--line)) 3%, transparent) 82%) border-box;
+  box-shadow: inset 0 0 30px -10px color-mix(in srgb, var(--c, transparent) 50%, transparent);
 }
-.wb-zone:nth-of-type(1) { --c: var(--capture); }   /* Capture */
-.wb-zone:nth-of-type(2) { --c: var(--view); }       /* View */
-.wb-zone--send { --c: var(--send); }                /* Send to AI (the outbound group) */
-.wb-zone:nth-of-type(4) { --c: var(--tools); }      /* Editor tools */
+.wb-zone--send { --c: var(--send); }                /* Send to AI — brand green (outbound) */
+.wb-zone--flow { --c: var(--view); }                /* Workflows — teal */
 
+/* TIER 1 — section title. Display face, larger, bold, and a BRIGHT tint of the section color
+   (mixed toward white) so it reads clearly against the same-colored wash behind it. */
 .wb-zone-title {
-  margin: 0; font-size: 10px; text-transform: uppercase;
-  letter-spacing: 1.2px; font-weight: 700; color: var(--c, var(--accent));
+  margin: 0 0 1px; font-family: var(--font-display);
+  font-size: 13px; text-transform: uppercase;
+  letter-spacing: 1px; font-weight: 800;
+  color: color-mix(in srgb, var(--c, var(--accent)) 55%, #ffffff);
+  display: flex; align-items: center; gap: 6px;
 }
-.wb-zone-hint { margin: 0 0 2px; font-size: 10.5px; color: var(--muted); line-height: 1.35; }
+/* TIER 2 — readable body copy. Body face, full brightness, medium weight (not the old vague grey). */
+.wb-zone-hint { margin: 0 0 3px; font-size: 11.5px; color: var(--text); opacity: .82; font-weight: 500; line-height: 1.4; }
+
+/* Workflows — saved runnable rows + the step builder. Reuses button/select/check idioms. */
+.wb-wf-list { display: flex; flex-direction: column; gap: 6px; }
+/* The builder panel — toggled by "+ New workflow" (the single opener); Save/Cancel close it. */
+.wb-builder {
+  display: flex; flex-direction: column; gap: 8px;
+  margin-top: 7px; padding-top: 8px; border-top: 1px dashed var(--line);
+}
+.wb-builder[hidden] { display: none; }
+.wb-wf-row { display: flex; gap: 6px; align-items: stretch; }
+.wb-wf-row .wb-act { flex: 1; }
+/* Inline delete confirmation — replaces the row's controls until the user commits or cancels. */
+.wb-wf-row.is-confirming { align-items: center; }
+.wb-wf-confirm-msg { flex: 1; font-size: 12px; color: var(--text); }
+.wb-wf-row.is-confirming .wb-act { flex: 0 0 auto; padding: 5px 9px; }
+.wb-act--danger {
+  background: color-mix(in srgb, var(--danger) 18%, transparent);
+  border-color: color-mix(in srgb, var(--danger) 55%, transparent); color: var(--danger);
+  justify-content: center; font-weight: 600;
+}
+.wb-act--danger:hover { background: color-mix(in srgb, var(--danger) 30%, transparent); border-color: var(--danger); }
+.wb-wf-steps { display: flex; flex-direction: column; gap: 8px; }
+.wb-wf-step {
+  display: flex; flex-direction: column; gap: 6px;
+  padding: 7px 8px; border: 1px solid var(--line); border-radius: var(--radius);
+  background: color-mix(in srgb, var(--view) 5%, transparent);
+}
+.wb-wf-step-head { display: flex; align-items: center; gap: 6px; }
+.wb-wf-step-head .wb-select { flex: 1; }
+.wb-wf-step-num {
+  font-size: 9.5px; text-transform: uppercase; letter-spacing: .6px; font-weight: 700;
+  color: var(--muted); flex: 0 0 auto; min-width: 48px;
+}
+/* The send sub-block — provider/format/isolate/instruction, shown only when type = Send to AI. */
+.wb-wf-send { display: flex; flex-direction: column; gap: 6px; padding-left: 4px; }
+.wb-wf-send[hidden] { display: none; }
 
 /* Buttons — three weights: primary (the one consequential action) > plain > ghost. */
 .wb-act {
@@ -95,14 +183,42 @@ body { display: flex; flex-direction: column; }
   font: inherit; font-size: 12.5px; text-align: left; cursor: pointer;
   transition: background .12s, border-color .12s, color .12s;
 }
-.wb-act:hover { background: var(--panel-3); border-color: #3a414c; }
+/* Hover: a soft brand-green glow ring + green-leaning border, to match the glowing sections. */
+.wb-act:hover {
+  background: var(--panel-3);
+  border-color: color-mix(in srgb, var(--brand) 45%, var(--line));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--brand) 22%, transparent);
+}
 .wb-act:active { transform: translateY(1px); }
-/* Primary = the outbound action. Amber-filled so it can't be mistaken for a sub-action. */
+/* Leading icon column — brand-green-tinted everywhere (not per-group) so the action list reads
+   as one branded family. Fixed width keeps the labels aligned. */
+.wb-act-ic {
+  flex: 0 0 1.1em; display: grid; place-items: center; line-height: 1;
+  color: var(--brand); opacity: .9;
+}
+/* Inline Bootstrap-icon SVGs inherit currentColor; sized per host. */
+.wb-act-ic .wb-svg { width: 14px; height: 14px; }
+.wb-act:hover .wb-act-ic { opacity: 1; }
+.wb-iconbtn .wb-svg { width: 15px; height: 15px; }
+/* Collapse chevron points down when expanded, flips up when the editor is collapsed. */
+.wb-svg-collapse { transition: transform .15s; }
+body.editor-collapsed .wb-svg-collapse { transform: rotate(180deg); }
+/* TIER 3 — group caption (CAPTURE / EDITOR OUTPUT). Brighter tint of its color so it's legible. */
+.wb-group-cap {
+  font-family: var(--font-display);
+  font-size: 10px; text-transform: uppercase; letter-spacing: 1px; font-weight: 800;
+  color: color-mix(in srgb, var(--c, var(--muted)) 50%, #ffffff); padding: 0 2px 2px;
+}
+/* Both Normal-rail group captions use brand green — consistent with the all-green icons. */
+.wb-group[data-group="capture"] { --c: var(--brand); }
+.wb-group[data-group="output"]  { --c: var(--brand); }
+.wb-group .wb-act { justify-content: flex-start; }
+/* Primary = the outbound action. Brand-green filled so it can't be mistaken for a sub-action. */
 .wb-act--primary {
-  background: var(--send-2); border-color: var(--send-2); color: #1a1206;
+  background: var(--send-2); border-color: var(--send-2); color: var(--primary-ink);
   font-weight: 650; justify-content: center;
 }
-.wb-act--primary:hover { background: var(--send); border-color: var(--send); }
+.wb-act--primary:hover { background: var(--accent-2); border-color: var(--accent-2); }
 /* Ghost = the quiet sibling of a primary action. */
 .wb-act--ghost { background: transparent; color: var(--muted); justify-content: center; font-size: 12px; }
 .wb-act--ghost:hover { background: var(--panel-2); color: var(--text); }
@@ -121,15 +237,18 @@ body { display: flex; flex-direction: column; }
 .wb-options { margin-top: 2px; }
 .wb-options > summary {
   list-style: none; cursor: pointer; user-select: none;
-  font-size: 11px; color: var(--muted); padding: 2px 0;
-  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 11.5px; color: var(--muted); padding: 5px 8px;
+  display: flex; align-items: center; gap: 6px;
+  background: var(--panel-2); border: 1px solid var(--line); border-radius: var(--radius);
+  transition: background .12s, color .12s, border-color .12s;
 }
 .wb-options > summary::-webkit-details-marker { display: none; }
-.wb-options > summary::before {
-  content: "▸"; font-size: 9px; transition: transform .12s; color: var(--send);
+.wb-options > summary::after {
+  content: "⌄"; margin-left: auto; font-size: 14px; line-height: 1;
+  transition: transform .15s; color: var(--send);
 }
-.wb-options[open] > summary::before { transform: rotate(90deg); }
-.wb-options > summary:hover { color: var(--text); }
+.wb-options[open] > summary::after { transform: rotate(180deg); }
+.wb-options > summary:hover { color: var(--text); background: var(--panel-3); border-color: #3a414c; }
 .wb-options:not([open]) > .wb-options-body { display: none; }
 .wb-options[open] > .wb-options-body {
   display: flex; flex-direction: column; gap: 8px;
@@ -138,10 +257,27 @@ body { display: flex; flex-direction: column; }
 
 /* Labelled field: a label row + a full-width select under it */
 .wb-field { display: flex; flex-direction: column; gap: 3px; }
+/* TIER 3 — field label (FORMAT / INSTRUCTION). Brightened + heavier so it doesn't disappear. */
 .wb-field-label {
-  font-size: 10px; text-transform: uppercase; letter-spacing: .6px; color: var(--muted);
+  font-size: 10px; text-transform: uppercase; letter-spacing: .7px; font-weight: 700;
+  color: color-mix(in srgb, var(--muted) 80%, #ffffff);
 }
 .wb-field .wb-select { width: 100%; }
+
+/* Custom instruction presets — name/text inputs + the save/delete controls. */
+.wb-input, .wb-textarea-sm {
+  background: var(--panel-2); color: var(--text);
+  border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 6px 8px; font: inherit; font-size: 12.5px; width: 100%;
+}
+.wb-textarea-sm { resize: vertical; line-height: 1.4; }
+.wb-input:focus, .wb-textarea-sm:focus { border-color: var(--accent); }
+.wb-input:focus:not(:focus-visible), .wb-textarea-sm:focus:not(:focus-visible) { outline: none; }
+.wb-preset-row { display: flex; gap: 6px; }
+.wb-preset-row .wb-act { flex: 1; }
+.wb-preset-editor { display: flex; flex-direction: column; gap: 7px; }
+/* `display` above would otherwise override the HTML `hidden` attribute — keep hidden hidden. */
+.wb-preset-editor[hidden], .wb-act[hidden] { display: none; }
 
 /* Checkbox toggle row (Context Pack) */
 .wb-check {
@@ -149,7 +285,10 @@ body { display: flex; flex-direction: column; }
   font-size: 12px; color: var(--text); cursor: pointer; line-height: 1.35;
 }
 .wb-check input { margin: 2px 0 0; accent-color: var(--send); cursor: pointer; }
-.wb-check-hint { color: var(--muted); font-size: 10px; display: block; }
+.wb-check-hint { color: var(--muted); font-size: 10.5px; font-weight: 500; display: block; }
+/* Isolate is markdown-only; greyed + non-interactive for other formats. */
+.wb-check.is-disabled { opacity: .45; cursor: not-allowed; }
+.wb-check.is-disabled input { cursor: not-allowed; }
 
 /* Editor */
 .wb-editor-wrap { flex: 1; display: flex; flex-direction: column; min-width: 0; min-height: 0; }
@@ -158,9 +297,9 @@ body { display: flex; flex-direction: column; }
   padding: 6px 8px 6px 14px; border-bottom: 1px solid var(--line);
   background: var(--panel-2);
 }
-.wb-editor-label { font-size: 12px; color: var(--muted); letter-spacing: .5px; }
+.wb-editor-label { font-size: 12px; color: var(--text); opacity: .8; font-weight: 600; letter-spacing: .3px; }
 .wb-editor-bar-right { display: flex; align-items: center; gap: 8px; }
-.wb-charcount { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.wb-charcount { font-size: 11px; color: var(--muted); font-weight: 500; font-variant-numeric: tabular-nums; }
 
 /* Icon buttons live IN the editor bar (Clear, Collapse) — off the action menu. */
 .wb-iconbtn {
@@ -189,7 +328,7 @@ body.editor-collapsed .wb-editor-wrap { flex: 0 0 auto; }
 /* Status */
 .wb-status {
   padding: 7px 14px; border-top: 1px solid var(--line);
-  background: var(--panel); color: var(--muted); font-size: 12px;
+  background: var(--panel); color: var(--text); opacity: .85; font-size: 12px; font-weight: 500;
   min-height: 30px;
 }
 .wb-status.is-ok { color: #98c379; }

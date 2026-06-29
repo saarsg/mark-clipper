@@ -69,7 +69,9 @@ that does and does not mean.
    your clipboard and the AI chat opens in a new tab. You paste it — nothing is
    auto-submitted.
 7. **Options ▸** reveals extras: output format (markdown / HTML / plain / JSON),
-   a **Context Pack** (frontmatter + document block), and a prompt **Instruction**.
+   **Isolate page from prompt** (fences the content in a `<document>` block so the AI
+   reads it as data, not instructions — the guard against injected prompts), and a
+   prompt **Instruction** (built-in or your own saved presets).
    **Insert source link** and **Export file** live under Editor tools.
 
 Browser/internal pages (`chrome://`, the web store, `view-source:`) can't be
