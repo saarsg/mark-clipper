@@ -14,24 +14,26 @@
     <style>
       /* Banner-hero override of the Cayman text header — dark, brand-green CTA. */
       .page-header { display: none; }              /* drop Cayman's colored text band */
+      body { background: #0c0e12; }                /* page bg matches hero so nothing reads as a crop */
       .mc-hero {
         background: #0c0e12;
         text-align: center;
-        padding: 0;
-        border-bottom: 1px solid #21252c;
+        padding: 2.5rem 1.5rem 0;                  /* breathing room around the banner — not full-bleed */
       }
       .mc-hero img {
         display: block;
         width: 100%;
-        max-width: 1400px;
+        max-width: 1180px;
         height: auto;
         margin: 0 auto;
+        border-radius: 18px;                       /* soften the sharp corners */
+        box-shadow: 0 18px 60px rgba(0,0,0,0.55),  /* lift the banner off the page */
+                    0 0 0 1px rgba(73,220,127,0.10);/* whisper of green edge, matches brand */
       }
       .mc-cta {
         background: #0c0e12;
         text-align: center;
-        padding: 1.5rem 1rem 2rem;
-        border-bottom: 1px solid #21252c;
+        padding: 1.75rem 1rem 2.5rem;              /* generous, no hard divider — blends into content */
       }
       .mc-btn {
         display: inline-block;
@@ -59,6 +61,34 @@
       .mc-subhead-home { color: #49dc7f; }
       .mc-subhead-gh { color: #c7cedb; font-weight: 600; }
       .mc-subhead-gh:hover { color: #f4f6fa; }
+
+      /* ---- Full-dark content: override Cayman's light theme to match the hero ---- */
+      .main-content { color: #c7cedb; }                          /* body text — soft light */
+      .main-content h1, .main-content h2, .main-content h3,
+      .main-content h4, .main-content h5, .main-content h6 {
+        color: #49dc7f;                                          /* brand-green headings */
+        border-bottom: 1px solid #21252c;                        /* quiet rule under headings */
+        padding-bottom: 0.3rem;
+      }
+      .main-content strong { color: #f4f6fa; }                   /* emphasis brightens */
+      .main-content a { color: #5fe39a; }                        /* links: lighter green for AA contrast on dark */
+      .main-content a:hover { color: #8af0b7; }
+      .main-content code {
+        color: #9fe7c0; background-color: #1b1e24; border: 1px solid #2c313a;
+      }
+      .main-content pre {
+        color: #c7cedb; background-color: #14161a; border: 1px solid #2c313a;
+      }
+      .main-content pre code { color: #c7cedb; background: transparent; border: 0; }
+      .main-content blockquote {
+        color: #a7b0bf; border-left: 0.3rem solid #36b566;
+      }
+      .main-content table th, .main-content table td { border-color: #2c313a; }
+      .main-content table th { color: #f4f6fa; }
+      .main-content hr { background-color: #21252c; }
+      .site-footer { border-top: 1px solid #21252c; color: #8b93a3; }
+      .site-footer-owner { color: #c7cedb; }
+      .site-footer a { color: #5fe39a; }
     </style>
   </head>
   <body>
